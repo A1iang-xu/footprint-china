@@ -110,7 +110,10 @@ const handleMapClick = async (params: any) => {
       const adcode = adcodeMap[areaName];
       if (!adcode) return ElMessage.warning('暂无该区域数据');
 
-      const response = await fetch(`https://geo.datav.aliyun.com/areas_v3/bound/${adcode}_full.json`);
+      // 加上 { referrerPolicy: 'no-referrer' }，告诉浏览器不要携带来源域名
+      const response = await fetch(`https://geo.datav.aliyun.com/areas_v3/bound/${adcode}_full.json`, {
+        referrerPolicy: 'no-referrer'
+      });
       const geoJson = await response.json();
       
       currentLevel.value = 'province';
