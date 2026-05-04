@@ -92,36 +92,22 @@ const registerAndRenderMap = (mapName: string, geoJson: any) => {
 
 // 点击省份下钻或城市打卡
 const handleMapClick = async (params: any) => {
-  const areaName = params.name;
+  const areaName = params.name; 
 
   if (currentLevel.value === 'china') {
     try {
-      // 省份代码字典映射
-      const adcodeMap: Record<string, string> = {
-        '北京市': '110000', '天津市': '120000', '河北省': '130000', '山西省': '140000', '内蒙古自治区': '150000',
-        '辽宁省': '210000', '吉林省': '220000', '黑龙江省': '230000', '上海市': '310000', '江苏省': '320000',
-        '浙江省': '330000', '安徽省': '340000', '福建省': '350000', '江西省': '360000', '山东省': '370000',
-        '河南省': '410000', '湖北省': '420000', '湖南省': '430000', '广东省': '440000', '广西壮族自治区': '450000',
-        '海南省': '460000', '重庆市': '500000', '四川省': '510000', '贵州省': '520000', '云南省': '530000',
-        '西藏自治区': '540000', '陕西省': '610000', '甘肃省': '620000', '青海省': '630000', '宁夏回族自治区': '640000',
-        '新疆维吾尔自治区': '650000', '台湾省': '710000', '香港特别行政区': '810000', '澳门特别行政区': '820000'
-      };
+      const response = await fetch(`/maps/province/${areaName}.json`);
       
-      const adcode = adcodeMap[areaName];
-      if (!adcode) return ElMessage.warning('暂无该区域数据');
-
-// 1. 目标真实的阿里云地址
-const targetUrl = `https://geo.datav.aliyun.com/areas_v3/bound/${adcode}_full.json`;
-
-// 2. 换用更强大的 AllOrigins 代理，加上 /raw 保证返回的是纯净的 JSON 格式
-const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
+      // 如果请求失败（比如没找到对应的文件），抛出异常
+      if (!response.ok) throw new Error('地图数据不存在'); 
+      
       const geoJson = await response.json();
       
       currentLevel.value = 'province';
       currentProvince.value = areaName;
       registerAndRenderMap(areaName, geoJson);
     } catch (error) {
-      ElMessage.error(`加载地图失败`);
+      ElMessage.error(`加载 ${areaName} 地图失败，请检查文件是否存在`);
     }
   } else {
     emit('openDrawer', { cityName: areaName, provinceName: currentProvince.value });
