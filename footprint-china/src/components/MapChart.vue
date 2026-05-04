@@ -110,10 +110,8 @@ const handleMapClick = async (params: any) => {
       const adcode = adcodeMap[areaName];
       if (!adcode) return ElMessage.warning('暂无该区域数据');
 
-     // 告诉浏览器：去请求数据的时候，把我们的 vercel 域名藏起来，伪装成直接访问
-      const response = await fetch(`https://geo.datav.aliyun.com/areas_v3/bound/${adcode}_full.json`, {
-      referrerPolicy: 'no-referrer'
-      });
+      // 完美绕过跨域和防盗链：直接向 Vercel 的代理路由发起请求
+      const response = await fetch(`/aliyun-maps/${adcode}_full.json`);
       const geoJson = await response.json();
       
       currentLevel.value = 'province';
