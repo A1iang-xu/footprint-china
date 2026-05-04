@@ -110,12 +110,11 @@ const handleMapClick = async (params: any) => {
       const adcode = adcodeMap[areaName];
       if (!adcode) return ElMessage.warning('暂无该区域数据');
 
-      // 1. 目标真实的阿里云地址
+// 1. 目标真实的阿里云地址
 const targetUrl = `https://geo.datav.aliyun.com/areas_v3/bound/${adcode}_full.json`;
 
-// 2. 套上一层强大的免费公共跨域代理 (corsproxy.io)
-// 它会替我们向阿里云要数据，并打上允许跨域的标签返回给我们的前端
-const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`);
+// 2. 换用更强大的 AllOrigins 代理，加上 /raw 保证返回的是纯净的 JSON 格式
+const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
       const geoJson = await response.json();
       
       currentLevel.value = 'province';
