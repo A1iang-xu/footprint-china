@@ -110,9 +110,9 @@ const handleMapClick = async (params: any) => {
       const adcode = adcodeMap[areaName];
       if (!adcode) return ElMessage.warning('暂无该区域数据');
 
-      // 加上 { referrerPolicy: 'no-referrer' }，告诉浏览器不要携带来源域名
+     // 告诉浏览器：去请求数据的时候，把我们的 vercel 域名藏起来，伪装成直接访问
       const response = await fetch(`https://geo.datav.aliyun.com/areas_v3/bound/${adcode}_full.json`, {
-        referrerPolicy: 'no-referrer'
+      referrerPolicy: 'no-referrer'
       });
       const geoJson = await response.json();
       
